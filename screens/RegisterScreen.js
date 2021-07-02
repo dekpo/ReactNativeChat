@@ -1,12 +1,33 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Input, Button } from 'react-native-elements';
+import { auth } from '../firebase';
 
 const RegisterScreen = () => {
-    const [email,setEmail] = useState('');
-    const [password,setPassword] = useState('');
-    const [name,setName] = useState('');
-    const [imageUrl,setImageUrl] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
+
+    const register = () => {
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+
+                // Signed in 
+                let user = userCredential.user;
+                user.updateProfile({
+                    displayName: name,
+                    photoURL: imageUrl ? imageUrl : "https://source.unsplash.com/random"
+                }).catch(function(error){
+                    alert(error.message)
+                });
+
+            })
+            .catch((error) => {
+                alert(error.message)
+            });
+    }
+
     return (
         <View style={styles.container}>
             <Input
@@ -16,7 +37,7 @@ const RegisterScreen = () => {
                 value={name}
                 onChangeText={text => setName(text)}
             />
-             <Input
+            <Input
                 placeholder="Enter your email"
                 label='Email'
                 leftIcon={{ type: 'material', name: 'email' }}
@@ -38,7 +59,7 @@ const RegisterScreen = () => {
                 value={imageUrl}
                 onChangeText={text => setImageUrl(text)}
             />
-            <Button title="Register" onPress={() => alert('Register')} />
+            <Button title="Register" onPress={register} />
         </View>
     )
 }
@@ -47,8 +68,8 @@ export default RegisterScreen
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      alignItems: 'center',
-      padding: 10,
+        flex: 1,
+        alignItems: 'center',
+        padding: 10,
     },
-  });
+});
