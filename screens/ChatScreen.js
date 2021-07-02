@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
-import { auth } from '../firebase';
+import { auth,db } from '../firebase';
 import { AntDesign } from '@expo/vector-icons';
 import { Avatar } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat'
@@ -24,7 +24,19 @@ const ChatScreen = ({ navigation }) => {
       }, [])
 
       const onSend = useCallback((messages = []) => {
-        setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+        setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+        const {
+            _id,
+            createdAt,
+            text,
+            user
+        } = messages[0];
+        db.collection('chats').add({
+            _id,
+            createdAt,
+            text,
+            user
+        })
       }, [])
 
     useLayoutEffect(() => {
@@ -66,7 +78,9 @@ const ChatScreen = ({ navigation }) => {
         messages={messages}
         onSend={messages => onSend(messages)}
         user={{
-          _id: 1,
+          _id: auth?.currentUser?.email,
+          name: auth?.currentUser?.displayName,
+          avatar: auth?.currentUser?.photoURL
         }}
       />
     )
