@@ -8,7 +8,7 @@ import { GiftedChat } from 'react-native-gifted-chat'
 const ChatScreen = ({ navigation }) => {
     const [messages, setMessages] = useState([]);
 
-    useEffect(() => {
+    /* useEffect(() => {
         setMessages([
           {
             _id: 1,
@@ -21,7 +21,23 @@ const ChatScreen = ({ navigation }) => {
             },
           },
         ])
-      }, [])
+      }, []) */
+
+      useLayoutEffect(()=>{
+          const getMessages = db.collection('chats').orderBy('createdAt', 'desc').onSnapshot(
+              snapshot => setMessages(
+                  snapshot.docs.map(
+                      doc => ({
+                          _id: doc.data()._id,
+                          createdAt: doc.data().createdAt.toDate(),
+                          text: doc.data().text,
+                          user: doc.data().user
+                      })
+                  )
+              )
+          );
+          return getMessages;
+      },[])
 
       const onSend = useCallback((messages = []) => {
         setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
