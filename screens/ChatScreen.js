@@ -3,25 +3,11 @@ import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 import { auth,db } from '../firebase';
 import { AntDesign } from '@expo/vector-icons';
 import { Avatar } from 'react-native-elements';
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat } from 'react-native-gifted-chat';
+import uuid from 'react-native-uuid';
 
 const ChatScreen = ({ navigation }) => {
     const [messages, setMessages] = useState([]);
-
-    /* useEffect(() => {
-        setMessages([
-          {
-            _id: 1,
-            text: 'Bonjour developer',
-            createdAt: new Date(),
-            user: {
-              _id: 2,
-              name: 'React Native',
-              avatar: 'https://placeimg.com/140/140/any',
-            },
-          },
-        ])
-      }, []) */
 
       useLayoutEffect(()=>{
           const getMessages = db.collection('chats').orderBy('createdAt', 'desc').onSnapshot(
@@ -66,6 +52,7 @@ const ChatScreen = ({ navigation }) => {
                         source={{
                             uri: auth?.currentUser?.photoURL
                         }} />
+                        <Text>{auth?.currentUser?.displayName}</Text>
                 </View>
             ),
             headerRight: () => (
@@ -79,7 +66,17 @@ const ChatScreen = ({ navigation }) => {
 
     }, [])
 
-    const signOut = () => {
+    const signOut = async () => {
+        await db.collection('chats').add({
+            _id: uuid.v4(),
+            createdAt:new Date(),
+            text: 'Im out!',
+            user: {
+                _id: auth?.currentUser?.email,
+                name: auth?.currentUser?.displayName,
+                avatar: auth?.currentUser?.photoURL
+              }
+        });
         auth.signOut().then(
             () => {
                 navigation.replace('Login');
