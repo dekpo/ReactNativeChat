@@ -17,7 +17,7 @@ const RegisterScreen = ({ navigation }) => {
                 let user = userCredential.user;
                 user.updateProfile({
                     displayName: name,
-                    photoURL: imageUrl ? imageUrl : "https://source.unsplash.com/random"
+                    photoURL: imageUrl ? imageUrl : "https://www.w3schools.com/bootstrap4/img_avatar1.png"
                 }).catch(function(error){
                     alert(error.message)
                 });

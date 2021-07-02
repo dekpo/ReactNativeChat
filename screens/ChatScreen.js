@@ -92,6 +92,8 @@ const ChatScreen = ({ navigation }) => {
     return (
         <GiftedChat
         messages={messages}
+        showAvatarForEveryMessage={true}
+        renderUsernameOnMessage={true}
         onSend={messages => onSend(messages)}
         user={{
           _id: auth?.currentUser?.email,
