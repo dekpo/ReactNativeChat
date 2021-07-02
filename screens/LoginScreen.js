@@ -16,8 +16,9 @@ const LoginScreen = ({ navigation }) => {
     useEffect(()=>{
         const isSigned = auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('User Signed: ', user)
+                //console.log('User Signed: ', user)
                 // user is signed
+                navigation.replace('Chat');
             } else {
                 // no user signed
             }
